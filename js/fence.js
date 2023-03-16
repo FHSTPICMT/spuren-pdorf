@@ -10,7 +10,7 @@ let wakeLockSupported = false;
 let changeCount = 0;
 let playCount = 0;
 
-//Array 
+//Position Array 
 //mit Positions Name / Latitude, Longitude / Video, Bild Link
 const posArray =   
 [
