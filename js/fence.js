@@ -10,112 +10,6 @@ let wakeLockSupported = false;
 let changeCount = 0;
 let playCount = 0;
 
-//Position Array 
-//mit Positions Name / Latitude, Longitude / Video, Bild Link
-const posArray =   
-[
-  {
-    name: ['Reihe1'],
-    coord: "0,0"
-  },
-  {
-    name: ['01_Die_Ortsansaessigen','02_Steinbruch_Ort'],
-    coord: "48.131061,16.267094"
-  },
-  {
-    name: ['07_Die_Einfahrt'],
-    coord: "48.130694,16.267080"
-  },
-  {
-    name: ['03_Verladestation','04_Das_Lager'],
-    coord: "48.130333,16.267070"
-  },
-  {
-    name: ['05_Die_Ortschaften','06_Die_Kirche'],
-    coord: "48.129890,16.267016"
-  },
-  {
-    name: ['Reihe2'],
-    coord: "0,0"
-  },
-  {
-    name: ['24_Das_Lager_im_Westen'],
-    coord: "48.129432,16.267016"
-  },
-  {
-    name: ['08_Die_Wirtschaft','13_Das_Ziegelwerk'],
-    coord: "48.128947,16.267169"
-  },
-  {
-    name: ['15_Das_Steinbrecherhaus_Betrieb'],
-    coord: "48.128974,16.268046"
-  },
-  {
-    name: ['33_Der_Landschaftsgarten','34_Die_Passionsspiele'],
-    coord: "48.129088,16.268818"
-  },
-  {
-    name: ['31_Der_Badeunfall'],
-    coord: "48.129203,16.269612"
-  },
-  {
-    name: ['Reihe3'],
-    coord: "0,0"
-  },
-  {
-    name: ['32_Die_Austrocknung_des_Teichs','11_Der_Baron'],
-    coord: "48.128950,16.270406"
-  },
-  {
-    name: ['17_Das_NS-Arbeitsbuch_des_Steinbrucharbeiters','19_Die_Zwangsarbeit'],
-    coord: "48.128434,16.270105"
-  },
-  {
-    name: ['22_Der_Kellerausbau','23_Der_Aufseher'],
-    coord: "48.686426,15.855102"
-  },
-  {
-    name: ['07_Die_Einfahrt','09_Die_Kollegen'],
-    coord: "48.686072,15.855005"
-  },
-  {
-    name: ['27_Denunziert_und_deportiert','28_Die_Schotterwerbung'],
-    coord: "48.685856,15.854571"
-  },
-  {
-    name: ['Reihe4'],
-    coord: "0,0"
-  },
-  {
-    name: ['29_Der_Badeteich','30_Der_Badeteich_und_das_Steinbrecherhaus'],
-    coord: "48.687120,15.853970"
-  },
-  {
-    name: ['16_Das_Steinbrecherhaus_Stilllegung'],
-    coord: "48.687077,15.853421"
-  },
-  {
-    name: ['35_Die_Wehrsportuebungen'],
-    coord: "48.686724,15.853362 "
-  },
-  {
-    name: ['14_Das_Waechterhaus','12_Die_Betriebsbaracke'],
-    coord: "48.686369,15.853397"
-  },
-  {
-    name: ['18_Der_Gefolgschaftsraum','20_Der_Betriebsfuehrer'],
-    coord: "48.686014,15.853445"
-  },
-  {
-    name: ['21_Der_Nahrungsmangel','25_Vor_der_Befreiung'],
-    coord: "48.685660,15.853467"
-  },
-  {
-    name: ['26_Tag_der_Befreiung','36_Rechtsradikale_Umtriebe'],
-    coord: "48.685348,15.853703"
-  }
-]
-
 navigator.geolocation.watchPosition(succesCallback, errorCallback, options);
 
 //Get the current position
@@ -172,17 +66,19 @@ function SearchTriggerPos()
     currentDistance = calculateDistance(currentPos.latitude, currentPos.longitude,parseFloat(currentPosSplit[0]), parseFloat(currentPosSplit[1]));
 
     console.log(currentPointTemp.name.length);
-    if(currentPointTemp.name.length < 2)
+    if(currentPointTemp.name.length <= 1 && !currentPointTemp.passed)
     {
       console.log("One");
       $.getScript("player.js",loadPosition(currentPointTemp.name[0]));
-    } else
+      currentPointTemp.passed = true;
+    }
+    else if(currentPointTemp.name.length > 1 && !currentPointTemp.passed)
     {
       console.log("Multi");
       $.getScript("player.js",loadPosition(currentPointTemp.name[0]));
+      currentPointTemp.passed = true;
       
       audio.onended = function() {
-        console.log("Eeeeend");
         if(playCount < currentPointTemp.name.length-1)
         {
           playCount++;
@@ -193,6 +89,10 @@ function SearchTriggerPos()
           audio.onended = null;
         }
       };
+    } 
+    else
+    {
+      console.log("Already passed.");
     }
     document.getElementById("pointCountText").innerHTML = "Point Count: " + pointCount + "Change Count: " + changeCount;
   }
